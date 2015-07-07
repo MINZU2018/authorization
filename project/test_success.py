@@ -5,28 +5,32 @@ import tornado.web
 import hashlib
 from wechat_sdk import WechatBasic
 import os.path
+import requests
+import json
 
 import sys
 sys.path.append("..")
 
 from util.get_access import get_access_token
 
-token = "wechat"
-
+token = name
+APPID = appid
+APPSECRET = appsecret
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        signature = self.get_argument("signature", None)
-        timestamp = self.get_argument("timestamp", None)
-        nonce = self.get_argument("nonce", None)
-        echostr = self.get_argument("echostr", None)
-        lst = [timestamp, nonce, token]
-        lst.sort()
-        sha1 = hashlib.sha1()
-        map(sha1.update, lst)
-        hashcode=sha1.hexdigest()
-        if hashcode == signature:
-                return self.write(echostr)
+        # signature = self.get_argument("signature", None)
+        # timestamp = self.get_argument("timestamp", None)
+        # nonce = self.get_argument("nonce", None)
+        # echostr = self.get_argument("echostr", None)
+        # lst = [timestamp, nonce, token]
+        # lst.sort()
+        # sha1 = hashlib.sha1()
+        # map(sha1.update, lst)
+        # hashcode=sha1.hexdigest()
+        # if hashcode == signature:
+        #         return self.write(echostr)
+      	pass
 
     def post(self):
     	# 实例化 wechat
@@ -47,13 +51,7 @@ class MainHandler(tornado.web.RequestHandler):
 		    response = None
 		    if message.type == 'text':
 		        if message.content == 'wechat':
-		             response = wechat.response_news([
-			            {
-			                'title': u'mytitle',
-			                'description': u'jstiaozhuan',
-			                'url': u'http://104.236.134.217/login_access'
-			            }
-			          ])
+		        	response = wechat.response_text(u'<a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxafac6b4bc457eb26&redirect_uri=http://tuteng.info/login_access&response_type=code&scope=snsapi_userinfo&state=145#wechat_redirect">testtt</a>')
 		        else:
 		            response = wechat.response_text(u'world')
 		    elif message.type == 'image':
@@ -66,7 +64,35 @@ class MainHandler(tornado.web.RequestHandler):
 
 class LoginAccess(tornado.web.RequestHandler):
 	def get(self):
-		self.render("get_access.html")
+		code = self.get_argument("code", None)
+		get_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token"
+		token_payload = {
+			"appid": APPID,
+			"secret": APPSECRET,
+			"code": code,
+			"grant_type": "authorization_code"
+		}
+		response = requests.get(url=get_token_url, params=token_payload).content
+		response = json.loads(response)
+		get_info_url = "https://api.weixin.qq.com/sns/userinfo"
+		info_payload = {
+			"access_token": response["access_token"],
+			"openid": response["openid"],
+			"lang": "zh_CN"
+		}
+		info_response = requests.get(url=get_info_url, params=info_payload).content
+		info_response = json.loads(info_response)
+		self.render(
+			"get_access.html",
+			province=info_response["province"],
+			openid=info_response["openid"],
+			city=info_response["city"],
+			sex=1,
+			headimgurl=info_response["headimgurl"],
+			language=info_response["language"],
+			nickname=info_response["nickname"],
+			country=info_response["country"]
+			)
 
 	def post(self):
 		pass
@@ -74,11 +100,14 @@ class LoginAccess(tornado.web.RequestHandler):
 
 application = tornado.web.Application([
     (r"/", MainHandler),
-    (r"/login_access", LoginAccess),
+#    (r"/login_access", LoginAccess),
     ],
    template_path=os.path.join(os.path.dirname(__file__), "templates"),
    static_path=os.path.join(os.path.dirname(__file__), "static"),
 )
+application.add_handlers(r"^tuteng.info$",[
+		(r"/login_access", LoginAccess),
+	])
 
 if __name__ == "__main__":
     application.listen(8888)

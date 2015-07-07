@@ -24,11 +24,52 @@
             <div class="content">
             <div class="row">
             <div class="col-xs-12">
-            <div class="col-xs-4">
-            </div>
-              <div class="col-xs-4">
-                  <button type="button" class="btn btn-success">获取授权</button>
-              </div>
+                  <h5>
+                      姓名:
+                      {{ nickname }}
+                    </h5>
+          </div>
+              <div class="col-xs-12">
+                  <h5>
+                      性别:
+                      {{ sex }}
+                    </h5>
+          </div>
+                      <div class="col-xs-12">
+                  <h5>
+                    openid:
+                      {{ openid }}
+                    </h5>
+          </div>
+          <div class="col-xs-12">
+          <h5>
+          头像地址:
+          {{ headimgurl }}
+          </h5>
+          </div>
+          <div class="col-xs-12">
+          <h5>
+          语言:
+          {{ language }}
+          </h5>
+          </div>
+               <div class="col-xs-12">
+                  <h5>
+                      国家:
+                      {{ country }}
+                    </h5>
+          </div>
+            <div class="col-xs-12">
+                  <h5>
+                      省:
+                      {{ province }}
+                    </h5>
+          </div>
+                <div class="col-xs-12">
+                  <h5>
+                    市:
+                      {{ city }}
+                    </h5>
           </div>
           </div>
               <hr/>
@@ -45,10 +86,13 @@
     <script src="{{ static_url("js/jquery.min.js") }}"></script>
     <script src="{{ static_url("js/jquery.mmenu.min.all.js") }}"></script>
     <script src="{{ static_url("js/bootstrap.min.js") }}"></script>
-    <script src="{{ static_url("js/jweixin.js")}}"></script>
     <script type="text/javascript">
             $(function() {
                 $('nav#menu').mmenu();
             });
+
+    $("#get_auth").click(function(){
+      alert("我们将获取一些您的基本信息，同意请点击确定");
+    });
         </script>
 </html>
