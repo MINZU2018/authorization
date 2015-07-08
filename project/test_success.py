@@ -13,9 +13,9 @@ sys.path.append("..")
 
 from util.get_access import get_access_token
 
-token = "wechat"
-APPID = "wxafac6b4bc457eb26"
-APPSECRET = "1a0c74ca64b2c33fe0eaefda149e293e"
+token = "token"
+APPID = "appid"
+APPSECRET = "appsecret"
 
 class MainHandler(tornado.web.RequestHandler):
 
@@ -65,6 +65,7 @@ class MainHandler(tornado.web.RequestHandler):
 		    else:
 		        response = wechat.response_text(u'no image')
 		   	# print response
+			# 此处出现问题，一直干扰获取授权，导致code得不到，access_token,出错
 		    #self.write(response)
 
 
