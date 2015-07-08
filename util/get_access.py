@@ -3,8 +3,8 @@
 import requests
 import json
 
-APPID = "wxafac6b4bc457eb26"
-APPSECRET = "1a0c74ca64b2c33fe0eaefda149e293e"
+APPID = "appid"
+APPSECRET = "appsecret"
 PAYLOAD = {
 	"grant_type": "client_credential",
 	"appid": APPID,
